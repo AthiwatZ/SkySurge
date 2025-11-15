@@ -1,0 +1,32 @@
+using UnityEngine;
+
+public class Projectile : MonoBehaviour
+{
+    public float speed = 12f;
+    public int damage = 10;
+    public float lifeTime = 3f;
+    public Player owner; // เผื่อกันยิงโดนตัวเอง
+
+    Rigidbody2D rb;
+    CircleCollider2D col;
+
+    public void Init(Vector2 dir)
+    {
+        if (!rb) rb = GetComponent<Rigidbody2D>();
+        if (!col) col = GetComponent<CircleCollider2D>();
+
+        rb.linearVelocity = dir * speed;
+        col.isTrigger = true;
+
+        Destroy(gameObject, lifeTime);
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
+            other.GetComponent<Enemy>()?.TakeDamage(damage);
+            Destroy(gameObject);
+        }
+    }
+}
